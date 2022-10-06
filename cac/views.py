@@ -7,12 +7,7 @@ from django.urls import reverse
 from django.template import loader
 
 # Create your views here.
-def index(request):
-    if(request.method=='GET'):
-        titulo = 'Titulo cuando accedo por GET - MODIFICO EL VALOR'
-    else:
-        titulo = f'Titulo cuando accedo por otro metodo {request.method}'
-    parametetros_get = request.GET.get('nombre')
+def index(request):    
     listado_cursos = [
         {
             'nombre':'Fullstack Java',
@@ -30,23 +25,19 @@ def index(request):
             'categoria':'Analisis de datos'
         },
     ]
-    return render(request,'cac/index.html',{'titulo':titulo,'cursos':listado_cursos})
-    # return HttpResponse(f"""
-    #     <h1>{titulo}</h1>
-    #     <p>{parametetros_get}</p>
-    # """)
-
+    return render(request,'cac/publica/index.html',{'cursos':listado_cursos})
+    
 
 def quienes_somos(request):
     #return redirect('saludar_solito')
     #return redirect(reverse('saludar', kwargs={'nombre': 'PepaPig'}))
-    template = loader.get_template('cac/quienes_somos.html')
+    template = loader.get_template('cac/publica/quienes_somos.html')
     contexto = {'titulo':'Codo a Codo - Quienes Somos'}
     return HttpResponse(template.render(contexto,request))
 
 def ver_proyectos(request,anio=2022,mes=1):
     proyectos = []
-    return render(request,'cac/proyectos.html',{'proyectos':proyectos})
+    return render(request,'cac/publica/proyectos.html',{'proyectos':proyectos})
 
 def ver_cursos(request,anio=2022,mes=1):
     listado_cursos = [
@@ -66,8 +57,11 @@ def ver_cursos(request,anio=2022,mes=1):
             'categoria':'Analisis de datos'
         },
     ]
-    return render(request,'cac/cursos.html',{'cursos':listado_cursos})
+    return render(request,'cac/publica/cursos.html',{'cursos':listado_cursos})
 
+def index_administracion(request):
+    variable = 'test variable'
+    return render(request,'cac/administracion/index_administracion.html',{'variable':variable})
 
 def hola_mundo(request):
     return HttpResponse('Hola Mundo Django 🦄')

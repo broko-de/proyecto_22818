@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cursos</title>
+    <title>{% block titulo %}Inicio CAC{% endblock titulo %}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +14,11 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/cac/publica/css/style.css'%}">    
+
+    {% block css %}{% endblock css %}
 </head>
 <body>
     <header>
@@ -26,10 +31,7 @@
 
                 <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
                     <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
-                    <!-- ESTO ES UN COMENTARIO HTML -->
-                    {% comment "Comento el logo porque no estan los directorios estaticos" %}
-                        <img src="{% static '/cac/img/logocodoacodo.png'%}" alt="">
-                    {% endcomment %}
+                        <img src="{% static '/img/logocodoacodo.png'%}" alt="">
                     </a>
                     <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                         <li><a href="{% url 'inicio' %}" class="nav-link px-2 link-secondary">Inicio</a></li>
@@ -45,15 +47,17 @@
             </div>
         </nav>
     </header>
-    <main class="flex-shrink-0 mt-5">
-        <h1>CURSOS</h1>
+    
+    <main class="flex-shrink-0">
+        {% block contenido %}{% endblock contenido %}
     </main>
-
     
     {% include './footer.html' %}
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
     crossorigin="anonymous"></script>
+
+    {% block javascript %}{% endblock javascript %}
 </body>
 </html>
