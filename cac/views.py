@@ -1,6 +1,6 @@
 from multiprocessing import context
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from django.urls import reverse
 
@@ -58,6 +58,29 @@ def ver_cursos(request,anio=2022,mes=1):
         },
     ]
     return render(request,'cac/publica/cursos.html',{'cursos':listado_cursos})
+
+def api_proyectos(request,):
+    proyectos = [{
+        'autor': 'Gustavo Villegas',
+        'portada': 'https://agenciadeaprendizaje.bue.edu.ar/wp-content/uploads/2021/12/Gustavo-Martin-Villegas-300x170.png',
+        'url':'https://marvi-artarg.web.app/'
+    },{
+        'autor': 'Enzo Martín Zotti',
+        'portada': 'https://agenciadeaprendizaje.bue.edu.ar/wp-content/uploads/2022/01/Enzo-Martin-Zotti-300x170.jpg',
+        'url':'https://hablaconmigo.com.ar/'
+    },{
+        'autor': 'María Echevarría',
+        'portada': 'https://agenciadeaprendizaje.bue.edu.ar/wp-content/uploads/2022/01/Maria-Echevarria-300x170.jpg',
+        'url':'https://compassionate-colden-089e8a.netlify.app/'
+    },
+    {
+        'autor': 'FEDE LIQUIN',
+        'portada': 'https://agenciadeaprendizaje.bue.edu.ar/wp-content/uploads/2022/01/Maria-Echevarria-300x170.jpg',
+        'url':'https://compassionate-colden-089e8a.netlify.app/'
+    }]
+    response = {'status':'Ok','code':200,'message':'Listado de proyectos','data':proyectos}
+    return JsonResponse(response,safe=False)
+  
 
 def index_administracion(request):
     variable = 'test variable'
