@@ -6,6 +6,8 @@ from django.urls import reverse
 
 from django.template import loader
 
+from cac.forms import ContactoForm
+
 # Create your views here.
 def index(request):    
     listado_cursos = [
@@ -25,7 +27,19 @@ def index(request):
             'categoria':'Analisis de datos'
         },
     ]
-    return render(request,'cac/publica/index.html',{'cursos':listado_cursos})
+    mensaje= None
+    if(request.method == 'POST'):
+        contacto_form = ContactoForm(request.POST)
+        #deberia agregar las acciones que necesito hacer
+        mensaje= 'Hemos recibido tus datos, muchas gracias'
+    else:
+        contacto_form = ContactoForm()
+
+    return render(request,'cac/publica/index.html',
+                {'cursos':listado_cursos,
+                'contacto_form':contacto_form,
+                'mensaje':mensaje
+                })
     
 
 def quienes_somos(request):
