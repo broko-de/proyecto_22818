@@ -15,6 +15,7 @@ const renderProyecto = (proyecto) => {
 
 const divProyectos = document.querySelector("#divProyectos");
 
+// comentario
 fetch('/api_proyectos')
   .then((response) => response.json())
   .then((data) => {
@@ -25,3 +26,4 @@ fetch('/api_proyectos')
         divProyectos.insertAdjacentHTML('beforeend', html);
     });
   });
+

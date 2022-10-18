@@ -1,7 +1,64 @@
 from django import forms
+from django.forms import ValidationError
+
+def solo_caracteres(valor):
+    if any(char.isdigit() for char in valor):
+        raise ValidationError('El campo no puede contener números. %(valor)s',
+                                code='Error1',
+                                params={'valor':valor}
+                                )
 
 class ContactoForm(forms.Form):
-    nombre = forms.CharField(label='Nombre')
-    email = forms.EmailField(label='Email',max_length=150)
-    asunto = forms.CharField(label='Asunto',required=False)
-    mensaje = forms.CharField(label='Mensaje',required=False)
+    nombre = forms.CharField(
+            label='Nombre',
+            max_length=50,
+            required=False,
+            validators=(solo_caracteres,),
+            widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Ingrese nombre'})
+        )
+    email = forms.EmailField(
+            label='Email',
+            max_length=150,
+            error_messages={
+                'required':'Por favor completa el email'
+            },
+            widget=forms.TextInput(attrs={'class':'form-control','type':'email'})
+        )
+    asunto = forms.CharField(
+            label='Asunto',
+            max_length=100,
+            widget=forms.TextInput(attrs={'class':'form-control'})
+        )
+    mensaje = forms.CharField(
+            label='Mensaje',
+            max_length=500,
+            widget=forms.Textarea(attrs={'class':'form-control','rows':5})
+        )
+    suscripcion = forms.BooleanField(
+        label='Deseo suscribirme a las novedades de codo a codo',
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class':'form-check-input','value':1})
+    )
+
+
+    def clean_mensaje(self):
+        data = self.cleaned_data['mensaje']
+        if len(data) < 10:
+            raise ValidationError('Debes especificar mejor el mensaje')
+        return data
+
+    def clean_asunto(self):
+        data = self.cleaned_data['asunto']
+        return 'Asunto-'+data
+
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        asunto = cleaned_data.get("asunto")
+        suscripcion = cleaned_data.get("suscripcion")
+
+
+        if suscripcion and asunto and "suscripcion" not in asunto:
+            msg = "Debe agregar la palabara 'suscripcion' al asunto."
+            self.add_error('asunto', msg)
+            

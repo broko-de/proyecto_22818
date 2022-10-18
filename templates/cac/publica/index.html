@@ -77,7 +77,7 @@
                         {{mensaje}}
                     </div>
                 {% endif %}
-                <form id="contact-form" name="contact-form" action="{% url 'inicio' %}" method="POST">
+                <form novalidate id="contact-form" name="contact-form" action="{% url 'inicio' %}" method="POST">
                     {% csrf_token %}
 
                     {% comment %} {{ contacto_form }} {% endcomment %}
@@ -89,7 +89,20 @@
                         {{ contacto_form.as_ul }}
                     </ul> {% endcomment %}
 
-                    {{ contacto_form.as_p }}
+                    {% comment %} {{ contacto_form.as_p }} {% endcomment %}
+
+                    <div class="row">
+                        {% for campo in contacto_form %}
+
+                            <div class="col-md-12">
+                                <div class="md-form mb-0">
+                                    <label for="">{{ campo.label }}</label>
+                                    {{ campo }}
+                                </div>
+                            </div>
+                            <div>{{ campo.errors }}</div>
+                        {% endfor %}
+                    </div>
 
                     <div class="text-center text-md-left mt-3">
                         <button class="btn btn-primary" type="submit">Enviar</button>

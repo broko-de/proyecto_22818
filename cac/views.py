@@ -1,4 +1,3 @@
-from multiprocessing import context
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 
@@ -30,8 +29,12 @@ def index(request):
     mensaje= None
     if(request.method == 'POST'):
         contacto_form = ContactoForm(request.POST)
-        #deberia agregar las acciones que necesito hacer
-        mensaje= 'Hemos recibido tus datos, muchas gracias'
+        if (contacto_form.is_valid()):
+            #deberia agregar las acciones que necesito hacer
+            mensaje= 'Hemos recibido tus datos, muchas gracias'
+        else:
+            mensaje= 'Error'
+
     else:
         contacto_form = ContactoForm()
 
