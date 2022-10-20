@@ -7,6 +7,8 @@ from django.template import loader
 
 from cac.forms import ContactoForm
 
+from django.contrib import messages
+
 # Create your views here.
 def index(request):    
     listado_cursos = [
@@ -26,22 +28,21 @@ def index(request):
             'categoria':'Analisis de datos'
         },
     ]
-    mensaje= None
     if(request.method == 'POST'):
         contacto_form = ContactoForm(request.POST)
         if (contacto_form.is_valid()):
             #deberia agregar las acciones que necesito hacer
-            mensaje= 'Hemos recibido tus datos, muchas gracias'
+            messages.success(request,'Hemos recibido tu consulta, en breve te responderemos.')
+            messages.info(request,'Te estará llegando un email.')
         else:
-            mensaje= 'Error'
+            messages.warning(request,'Por favor revisa los errores del formulario.')
 
     else:
         contacto_form = ContactoForm()
 
     return render(request,'cac/publica/index.html',
                 {'cursos':listado_cursos,
-                'contacto_form':contacto_form,
-                'mensaje':mensaje
+                'contacto_form':contacto_form,                
                 })
     
 

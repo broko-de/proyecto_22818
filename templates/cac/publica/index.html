@@ -72,11 +72,13 @@
     
         <!--Grid column-->
             <div class="col-md-6 mb-md-0 mb-6">
-                {% if mensaje %}
-                    <div class="alert alert-success" role="alert">
-                        {{mensaje}}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" role="alert">
+                        {{ message }} 
                     </div>
-                {% endif %}
+                {% endfor %}
+                    
+                
                 <form novalidate id="contact-form" name="contact-form" action="{% url 'inicio' %}" method="POST">
                     {% csrf_token %}
 

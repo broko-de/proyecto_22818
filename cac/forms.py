@@ -9,6 +9,14 @@ def solo_caracteres(valor):
                                 )
 
 class ContactoForm(forms.Form):
+
+    TIPO_CONSULTA = (
+        ('','-Seleccione-'),
+        (1,'Inscripciones'),
+        (2,'Soporte Aula Virtual'),
+        (3,'Ser docente'),
+    )
+    
     nombre = forms.CharField(
             label='Nombre',
             max_length=50,
@@ -38,6 +46,13 @@ class ContactoForm(forms.Form):
         label='Deseo suscribirme a las novedades de codo a codo',
         required=False,
         widget=forms.CheckboxInput(attrs={'class':'form-check-input','value':1})
+    )
+
+    tipo_consulta = forms.ChoiceField(
+        label='Tipo de consulta',
+        choices=TIPO_CONSULTA,
+        initial='2',
+        widget=forms.Select(attrs={'class':'form-control'})
     )
 
 
