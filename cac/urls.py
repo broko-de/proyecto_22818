@@ -10,6 +10,10 @@ urlpatterns = [
     path('administracion/', views.index_administracion,name='inicio_administracion'),
     path('api_proyectos/',views.api_proyectos,name="api_proyectos"),
     
+    path('administracion/categorias', views.categorias_index,name='categorias_index'),
+    path('administracion/categorias/nuevo', views.categorias_nuevo,name='categorias_nuevo'),
+
+
     path('hola_mundo',views.hola_mundo ),
     path('saludar/',views.saludar,name='saludar_solito' ),
     path('saludar/<str:nombre>',views.saludar,name='saludar'),

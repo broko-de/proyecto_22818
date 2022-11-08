@@ -5,7 +5,8 @@ from django.urls import reverse
 
 from django.template import loader
 
-from cac.forms import ContactoForm
+from cac.forms import ContactoForm, CategoriaForm
+from cac.models import Categoria
 
 from django.contrib import messages
 
@@ -103,6 +104,23 @@ def api_proyectos(request,):
 def index_administracion(request):
     variable = 'test variable'
     return render(request,'cac/administracion/index_administracion.html',{'variable':variable})
+
+def categorias_index(request):
+    #query set
+    categorias = Categoria.objects.filter(baja=False)
+    return render(request,'cac/administracion/categorias/index.html',{'categorias':categorias})
+
+def categorias_nuevo(request):
+    if(request.method=='POST'):
+        formulario = CategoriaForm(request.POST)
+        if formulario.is_valid():
+            nombre = formulario.cleaned_data['nombre']
+            nueva_categoria = Categoria(nombre=nombre)
+            nueva_categoria.save()
+            return redirect('categorias_index')
+    else:
+        formulario = CategoriaForm()
+    return render(request,'cac/administracion/categorias/nuevo.html',{'formulario':formulario})
 
 def hola_mundo(request):
     return HttpResponse('Hola Mundo Django 🦄')
