@@ -41,7 +41,7 @@ class Estudiante(models.Model):
     matricula = models.CharField(max_length=10,verbose_name='Matricula')
 
 class Categoria(models.Model):
-    nombre = models.CharField(max_length=100, verbose_name='Nombre')
+    nombre = models.CharField(max_length=100, verbose_name='Nombre Categoria')
     baja = models.BooleanField(default=0)
 
     def __str__(self):

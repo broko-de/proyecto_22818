@@ -1,6 +1,8 @@
 from django import forms
 from django.forms import ValidationError
 
+from .models import Categoria
+
 def solo_caracteres(valor):
     if any(char.isdigit() for char in valor):
         raise ValidationError('El campo no puede contener números. %(valor)s',
@@ -77,12 +79,27 @@ class ContactoForm(forms.Form):
             msg = "Debe agregar la palabara 'suscripcion' al asunto."
             self.add_error('asunto', msg)
             
-class CategoriaForm(forms.Form):
+class CategoriaForm(forms.ModelForm):
 
-    nombre = forms.CharField(
-            label='Nombre', 
-            max_length=50,
-            validators=(solo_caracteres,),
-            widget=forms.TextInput(attrs={'class':'form-control'})
-        )
+    # nombre = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Ingrese nombre'}),error_messages={'required':'Por favor no te olvide de mi!'})
+    class Meta:
+        model=Categoria
+        #fields='__all__'
+        fields=['nombre']
+        #exclude=('baja',)
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class':'form-control','placeholder':'Ingrese nombre'})
+        }
+        error_messages={
+            'nombre': {
+                'required':'No te olvides del nombre!'
+            }
+        }
     
+class CategoriaFormValidado(CategoriaForm):
+
+    def clean_nombre(self):
+        nombre = self.cleaned_data['nombre']
+        if nombre.upper() == 'ORIGAMI':
+            raise ValidationError('Codo a codo no dicta esta categoria de cursos')
+        return nombre
