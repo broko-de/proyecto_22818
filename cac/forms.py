@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ValidationError
 
-from .models import Categoria
+from .models import Curso, Categoria, EstudianteM, Proyecto
 
 def solo_caracteres(valor):
     if any(char.isdigit() for char in valor):
@@ -103,3 +103,58 @@ class CategoriaFormValidado(CategoriaForm):
         if nombre.upper() == 'ORIGAMI':
             raise ValidationError('Codo a codo no dicta esta categoria de cursos')
         return nombre
+
+class CursoForm(forms.ModelForm):
+
+    class Meta:
+        model=Curso
+        fields=['nombre','fecha_inicio','portada','descripcion','categoria']
+
+    nombre=forms.CharField(
+            label='Nombre', 
+            widget=forms.TextInput(attrs={'class':'form-control'})
+        )
+    fecha_inicio=forms.DateField(
+            label='Fecha Inicio', 
+            widget=forms.DateInput(attrs={'class':'form-control','type':'date'})
+        )
+    descripcion = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 5,'class':'form-control'})
+    )
+    """Se utiliza ModelChoiceField para poder realizar un filtrado de lo que
+    quiero mostrar en el selector"""
+    categoria = forms.ModelChoiceField(
+        queryset=Categoria.objects.filter(baja=False),
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    portada = forms.ImageField(
+        widget=forms.FileInput(attrs={'class':'form-control'})
+    )
+
+class EstudianteMForm(forms.ModelForm):
+
+    class Meta:
+        model=EstudianteM
+        fields=['nombre_m','apellido_m','email_m','dni_m','matricula_m']
+        widgets = {
+            'nombre_m': forms.TextInput(attrs={'class':'form-control'}),
+            'apellido_m': forms.TextInput(attrs={'class':'form-control'}),
+            'email_m': forms.EmailInput(attrs={'class':'form-control'}),
+            'dni_m': forms.NumberInput(attrs={'class':'form-control'}),
+            'matricula_m': forms.TextInput(attrs={'class':'form-control'}),
+        }
+
+
+class ProyectoForm(forms.ModelForm):
+    
+    class Meta:
+        model=Proyecto
+        fields=['nombre','descripcion','anio','url','portada','estudiante']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class':'form-control'}),
+            'descripcion': forms.Textarea(attrs={'cols': 80, 'rows': 5,'class':'form-control'}),
+            'anio': forms.NumberInput(attrs={'class':'form-control'}),
+            'url': forms.URLInput(attrs={'class':'form-control'}),
+            'portada': forms.FileInput(attrs={'class':'form-control'}),
+            'estudiante': forms.Select(attrs={'class':'form-control'}),
+        }
