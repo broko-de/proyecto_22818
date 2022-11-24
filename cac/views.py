@@ -5,8 +5,7 @@ from django.urls import reverse
 
 from django.template import loader
 
-from cac.forms import ContactoForm, CategoriaForm, CursoForm, CategoriaFormValidado, EstudianteMForm,ProyectoForm
-
+from cac.forms import ContactoForm, CategoriaForm, CursoForm, CategoriaFormValidado, EstudianteMForm,ProyectoForm, RegistrarUsuarioForm
 from cac.models import Categoria, Curso, EstudianteM, Proyecto
 
 from django.contrib import messages
@@ -16,6 +15,10 @@ from django.views import View
 
 from django.core.mail import send_mail
 from django.conf import settings
+
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
 
 """
     Vistas de la parte pública
@@ -127,7 +130,7 @@ def api_proyectos(request,):
 """
     Vistas de la parte administracion
 """
-
+@login_required(login_url='/cuentas/login')
 def index_administracion(request):
     variable = 'test variable'
     return render(request,'cac/administracion/index_administracion.html',{'variable':variable})
@@ -311,6 +314,38 @@ class CategoriaView(View):
         return render(request,self.template_name,{'formulario':form})
 
 
+"""
+Autenticacion
+"""
+def cac_login(request):
+    if request.method == 'POST':
+        # AuthenticationForm_can_also_be_used__
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('inicio')
+        else:
+            messages.error(request, f'Cuenta o password incorrecto, realice el login correctamente')
+    form = AuthenticationForm()
+    return render(request, 'cac/publica/login.html', {'form': form})
+
+
+def cac_registrarse(request):
+    if request.method == 'POST':
+        form = RegistrarUsuarioForm(request.POST)
+        if form.is_valid():
+            form.save()        
+            messages.success(
+                request, f'Tu cuenta fue creada con éxito! Ya te podes loguear en el sistema.')
+            return redirect('login')
+    else:
+        form = RegistrarUsuarioForm()
+    return render(request, 'cac/publica/registrarse.html', {'form': form})
+
+
+
 def hola_mundo(request):
     return HttpResponse('Hola Mundo Django 🦄')
     
@@ -318,7 +353,6 @@ def saludar(request,nombre='Fede'):
     return HttpResponse(f"""
         <h1>Hola mundo Django - Un gusto {nombre}</h1>
     """)
-
 
 
 def ver_proyectos_2022_08(request):

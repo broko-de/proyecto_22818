@@ -3,6 +3,9 @@ from django.forms import ValidationError
 
 from .models import Curso, Categoria, EstudianteM, Proyecto
 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
 def solo_caracteres(valor):
     if any(char.isdigit() for char in valor):
         raise ValidationError('El campo no puede contener números. %(valor)s',
@@ -158,3 +161,9 @@ class ProyectoForm(forms.ModelForm):
             'portada': forms.FileInput(attrs={'class':'form-control'}),
             'estudiante': forms.Select(attrs={'class':'form-control'}),
         }
+
+
+class RegistrarUsuarioForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username','email' , 'password1', 'password2']
