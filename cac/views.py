@@ -85,6 +85,7 @@ def ver_proyectos(request,anio=2022,mes=1):
     proyectos = []
     return render(request,'cac/publica/proyectos.html',{'proyectos':proyectos})
 
+@login_required(login_url=settings.LOGIN_URL)
 def ver_cursos(request,anio=2022,mes=1):
     listado_cursos = [
         {
@@ -130,7 +131,7 @@ def api_proyectos(request,):
 """
     Vistas de la parte administracion
 """
-@login_required(login_url='/cuentas/login')
+@login_required(login_url=settings.LOGIN_URL)
 def index_administracion(request):
     variable = 'test variable'
     return render(request,'cac/administracion/index_administracion.html',{'variable':variable})
@@ -325,7 +326,11 @@ def cac_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('inicio')
+            nxt = request.GET.get('next',None)
+            if nxt is None:
+                return redirect('inicio')
+            else:
+                return redirect(nxt)
         else:
             messages.error(request, f'Cuenta o password incorrecto, realice el login correctamente')
     form = AuthenticationForm()
