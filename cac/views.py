@@ -18,7 +18,7 @@ from django.conf import settings
 
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 """
     Vistas de la parte pública
@@ -133,17 +133,23 @@ def api_proyectos(request,):
 """
 @login_required(login_url=settings.LOGIN_URL)
 def index_administracion(request):
+    if not request.user.groups.filter(name="administracion").exists():
+        return render(request,'cac/administracion/403_admin.html')
     variable = 'test variable'
     return render(request,'cac/administracion/index_administracion.html',{'variable':variable})
 
 """
     CRUD Categorias
 """
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.view_categoria', login_url=settings.LOGIN_URL)
 def categorias_index(request):
     #query set
     categorias = Categoria.objects.filter(baja=False)
     return render(request,'cac/administracion/categorias/index.html',{'categorias':categorias})
 
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.add_categoria', login_url=settings.LOGIN_URL)
 def categorias_nuevo(request):
     if(request.method=='POST'):
         formulario = CategoriaFormValidado(request.POST)
@@ -154,6 +160,8 @@ def categorias_nuevo(request):
         formulario = CategoriaFormValidado()
     return render(request,'cac/administracion/categorias/nuevo.html',{'formulario':formulario})
 
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.change_categoria', login_url=settings.LOGIN_URL)
 def categorias_editar(request,id_categoria):
     try:
         categoria = Categoria.objects.get(pk=id_categoria)
@@ -167,7 +175,9 @@ def categorias_editar(request,id_categoria):
     else:
        formulario = CategoriaFormValidado(instance=categoria)
     return render(request,'cac/administracion/categorias/editar.html',{'formulario':formulario})    
-    
+
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.delete_categoria', login_url=settings.LOGIN_URL)    
 def categorias_eliminar(request,id_categoria):
     try:
         categoria = Categoria.objects.get(pk=id_categoria)
@@ -180,11 +190,14 @@ def categorias_eliminar(request,id_categoria):
 """
     CRUD Cursos
 """
-
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.view_curso', raise_exception=True) #envia una exception 403
 def cursos_index(request):
     cursos = Curso.objects.all()
     return render(request,'cac/administracion/cursos/index.html',{'cursos':cursos})
 
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.add_curso', login_url=settings.LOGIN_URL)
 def cursos_nuevo(request):
     #forma de resumida de instanciar un formulario basado en model con los
     #datos recibidos por POST si la petición es por POST o bien vacio(None)
@@ -196,6 +209,8 @@ def cursos_nuevo(request):
         return redirect('cursos_index')
     return render(request,'cac/administracion/cursos/nuevo.html',{'formulario':formulario})
 
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.change_curso',  raise_exception=True)
 def cursos_editar(request,id_curso):
     try:
         curso = Curso.objects.get(pk=id_curso)
@@ -208,6 +223,8 @@ def cursos_editar(request,id_curso):
         return redirect('cursos_index')
     return render(request,'cac/administracion/cursos/editar.html',{'formulario':formulario})
 
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.delete_curso', login_url=settings.LOGIN_URL)
 def cursos_eliminar(request,id_curso):
     try:
         curso = Curso.objects.get(pk=id_curso)
@@ -220,11 +237,14 @@ def cursos_eliminar(request,id_curso):
 """
     CRUD Estudiantes
 """
-
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.view_estudiantem', login_url=settings.LOGIN_URL)
 def estudiantes_index(request):
     estudiantes = EstudianteM.objects.all()
     return render(request,'cac/administracion/estudiantes/index.html',{'estudiantes':estudiantes})
 
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.add_estudiantem', login_url=settings.LOGIN_URL)
 def estudiantes_nuevo(request):
     formulario = EstudianteMForm(request.POST or None)
     if formulario.is_valid():
@@ -233,6 +253,8 @@ def estudiantes_nuevo(request):
         return redirect('estudiantes_index')
     return render(request,'cac/administracion/estudiantes/nuevo.html',{'formulario':formulario})
 
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.change_estudiantem', login_url=settings.LOGIN_URL)
 def estudiantes_editar(request,id_estudiante):
     try:
         estudiante = EstudianteM.objects.get(pk=id_estudiante)
@@ -245,6 +267,8 @@ def estudiantes_editar(request,id_estudiante):
         return redirect('estudiantes_index')
     return render(request,'cac/administracion/estudiantes/editar.html',{'formulario':formulario})
 
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.delete_estudiantem', login_url=settings.LOGIN_URL)
 def estudiantes_eliminar(request,id_estudiante):
     try:
         estudiante = Proyecto.objects.get(pk=id_estudiante)
@@ -257,11 +281,14 @@ def estudiantes_eliminar(request,id_estudiante):
 """
     CRUD Proyectos
 """
-
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.view_proyecto', login_url=settings.LOGIN_URL)
 def proyectos_index(request):
     proyectos = Proyecto.objects.all()
     return render(request,'cac/administracion/proyectos/index.html',{'proyectos':proyectos})
 
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.add_proyecto', login_url=settings.LOGIN_URL)
 def proyectos_nuevo(request):
     formulario = ProyectoForm(request.POST or None,request.FILES or None)
     if formulario.is_valid():
@@ -270,6 +297,8 @@ def proyectos_nuevo(request):
         return redirect('proyectos_index')
     return render(request,'cac/administracion/proyectos/nuevo.html',{'formulario':formulario})
 
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.change_proyecto', login_url=settings.LOGIN_URL)
 def proyectos_editar(request,id_proyecto):
     try:
         proyecto = Proyecto.objects.get(pk=id_proyecto)
@@ -282,6 +311,8 @@ def proyectos_editar(request,id_proyecto):
         return redirect('proyectos_index')
     return render(request,'cac/administracion/proyectos/editar.html',{'formulario':formulario})
 
+@login_required(login_url=settings.LOGIN_URL)
+@permission_required('cac.delete_proyecto', login_url=settings.LOGIN_URL)
 def proyectos_eliminar(request,id_proyecto):
     try:
         proyecto = Proyecto.objects.get(pk=id_proyecto)
