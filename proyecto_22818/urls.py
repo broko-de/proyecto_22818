@@ -21,5 +21,6 @@ from cac.admin import mi_admin
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('cacadmin/', mi_admin.urls),
+    path('cac_api/',include('api_cac.urls')),
     path('',include('cac.urls'))
 ]
